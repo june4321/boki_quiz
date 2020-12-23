@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta name="robots" content="noindex">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      padding: 50px;
+    }
+
+    .modalin {
+      margin: 5% auto;
+      text-align: center;
+    }
+
+    .v--modal-box {
+      max-width: 100%;
+    }
+
+    .v--modal-background-click {
+      pointer-events: none;
+    }
+
+    .v--modal-background-click .btn {
+      pointer-events: auto;
+    }
+
+    @media(max-width: 576px) {}
+  </style>
+</head>
+
+<body>
+  <div id="app" class="row">
+    <div class="offset-sm-3 col-sm-6">
+      <h1>勘定科目クイズ</h1>
+      <p>更新すると初めに戻ります</p>
+
+      <div class="card">
+        <div class="card-body">
+          <p class="badge badge-dark">第 {{ (questionIndex+1) }} 問</p><span>／{{ this.questions.length }}問中</span>
+          <br>
+          <h4 class="card-title">{{ currentQuestion.question }}はどこに属する？</h4>
+          <hr>
+          <button type="button" class="btn btn-primary btn-lg btn-block text-left" v-for="(answer,index) in answers"
+            v-on:click="addAnswer(index)">{{ (index+1) }}.
+            {{ answer }}</button>
+        </div>
+      </div>
+
+    </div>
+
+    <modal class="" name="answer_modal">
+      <div class="modalin">
+        <button class="btn btn-danger" type="button" v-on:click="next">次へ</button>
+        <p>{{ message1 }}</p>
+      </div>
+    </modal>
+
+    <modal class="modalin" name="final_modal">
+      <div class="modalin">
+        <button class="btn btn-danger" type="button" v-on:click="hideFinalModal">閉じる</button>
+        <p>{{ message2 }}</p>
+      </div>
+    </modal>
+  </div>
+  <!--/#app-->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-js-modal@1.3.28/dist/index.min.js"></script>
+
+  <script>
+
+    Vue.use(window["vue-js-modal"].default);
+
+    const app = new Vue({
+
+      el: "#app",
+      
+      data: {
+        answeredArray: [],
+        questionIndex: 0,
+        message1: "",
+        message2: "",
+        answers: [
+          "資産",
+          "負債",
+          "資本",
+          "費用",
+          "収益",
+        ],
+        questions: [
+          //資産 5問
+          {
+            question: "現金",
+            correctAnswer: "資産"
+          },
+          {
+            question: "売掛金",
+            correctAnswer: "資産"
+          },
+          {
+            question: "当座預金",
+            correctAnswer: "資産"
+          },
+          {
+            question: "繰越商品",
+            correctAnswer: "資産"
+          },
+          {
+            question: "受取手形",
+            correctAnswer: "資産"
+          },
+          //負債 4問
+          {
+            question: "買掛金",
+            correctAnswer: "負債"
+          },
+          {
+            question: "借入金",
+            correctAnswer: "負債"
+          },
+          {
+            question: "支払手形",
+            correctAnswer: "負債"
+          },
+          {
+            question: "未払配当金",
+            correctAnswer: "負債"
+          },
+          //資本 3問
+          {
+            question: "資本金",
+            correctAnswer: "資本"
+          },
+          {
+            question: "繰越利益剰余金",
+            correctAnswer: "資本"
+          },
+          {
+            question: "利益準備金",
+            correctAnswer: "資本"
+          },
+          //費用5問
+          {
+            question: "仕入",
+            correctAnswer: "費用"
+          },
+          {
+            question: "貸倒引当金繰入",
+            correctAnswer: "費用"
+          },
+          {
+            question: "減価償却費",
+            correctAnswer: "費用"
+          },
+          {
+            question: "水道光熱費",
+            correctAnswer: "費用"
+          },
+          {
+            question: "給料",
+            correctAnswer: "費用"
+          },
+          //収益3問
+          {
+            question: "売上",
+            correctAnswer: "収益"
+          },
+          {
+            question: "受取家賃",
+            correctAnswer: "収益"
+          },
+          {
+            question: "雑益",
+            correctAnswer: "収益"
+          },
+        ],
+        shuffledQuestions: []
+      },
+
+      methods: {
+        shuffle: function (array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            let r = Math.floor(Math.random() * (i + 1))
+            let tmp = array[i]
+            array[i] = array[r]
+            array[r] = tmp
+          }
+          return array;
+        },
+        //各回答ボタン押したとき
+        addAnswer: function (index) {
+          this.showAnswerModal();
+          this.answeredArray.push(this.answers[index]);
+          console.log(this.answers[index]);
+          //各問の正答
+          theCorrectAnswer = this.questions[this.questionIndex].correctAnswer;
+          if (this.answers[index] == theCorrectAnswer) {
+            this.message1 = "正解(=ﾟωﾟ)ﾉ三☆"
+          } else {
+            this.message1 = `不正解(;^_^A  正解は 「 ${theCorrectAnswer} 」です`
+          }
+        },
+        //次へボタン押したとき
+        next: function () {
+          if (this.questions.length == this.answeredArray.length) {
+            let correctCount = 0;
+            for (let i in this.answeredArray) {
+
+              if (this.answeredArray[i] == this.questions[i].correctAnswer) {
+                correctCount++;
+
+              }
+            }
+            this.hideAnswerModal();
+            this.showFinalModal();
+            this.message2 = `${this.questions.length} 問中 ${correctCount}問正解です！`;
+            console.log(this.message2);
+          } else {
+            this.hideAnswerModal();
+            this.message1 = "";
+            this.questionIndex++;
+
+          }
+        },
+        //modal関係
+        showAnswerModal: function () {
+          this.$modal.show("answer_modal");
+        },
+        hideAnswerModal: function () {
+          this.$modal.hide("answer_modal");
+        },
+        showFinalModal: function () {
+          this.$modal.show("final_modal");
+        },
+        hideFinalModal: function () {
+          this.$modal.hide("final_modal");
+        }
+      },
+
+      computed: {
+        currentQuestion: function () {
+
+          return this.shuffledQest[this.questionIndex];
+
+        },
+        //this.questionsをシャッフルして、this.shuffledQuestionsに代入して、this.currentQuestionに渡す
+        shuffledQest: function () {
+          this.shuffledQuestions = this.shuffle(this.questions);
+          console.log(this.shuffledQuestions);
+          return this.shuffledQuestions
+        }
+
+      },
+    })
+
+  </script>
+</body>
+
+</html>
