@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>勘定科目クイズ</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
@@ -32,17 +32,19 @@
 
     @media(max-width: 576px) {}
   </style>
+
 </head>
 
 <body>
   <div id="app" class="row">
     <div class="offset-sm-3 col-sm-6">
-      <h1>勘定科目クイズ</h1>
-      <p>更新すると初めに戻ります</p>
-
+      <div class="d-flex justify-content-between">
+        <h1>勘定科目クイズ</h1>
+        <button class="btn btn-outline-primary" type="button" v-on:click="reset">1問目からやり直す</button>
+      </div>
       <div class="card">
         <div class="card-body">
-          <p class="badge badge-dark">第 {{ (questionIndex+1) }} 問</p><span>／{{ this.questions.length }}問中</span>
+          <p class="badge badge-dark">第 {{ (questionIndex+1) }} 問／（全{{ this.questions.length }}問）</p><span></span>
           <br>
           <h4 class="card-title">{{ currentQuestion.question }}はどこに属する？</h4>
           <hr>
@@ -51,7 +53,6 @@
             {{ answer }}</button>
         </div>
       </div>
-
     </div>
 
     <modal class="" name="answer_modal">
@@ -60,7 +61,6 @@
         <p>{{ message1 }}</p>
       </div>
     </modal>
-
     <modal class="modalin" name="final_modal">
       <div class="modalin">
         <button class="btn btn-danger" type="button" v-on:click="hideFinalModal">閉じる</button>
@@ -79,7 +79,7 @@
     const app = new Vue({
 
       el: "#app",
-      
+
       data: {
         answeredArray: [],
         questionIndex: 0,
@@ -183,6 +183,7 @@
       },
 
       methods: {
+        //問題をシャッフル
         shuffle: function (array) {
           for (let i = array.length - 1; i > 0; i--) {
             let r = Math.floor(Math.random() * (i + 1))
@@ -191,6 +192,12 @@
             array[r] = tmp
           }
           return array;
+        },
+        //数値の初期化
+        reset: function () {
+          this.shuffledQuestions = [];
+          this.questionIndex = 0;
+          this.answeredArray = [];
         },
         //各回答ボタン押したとき
         addAnswer: function (index) {
@@ -239,6 +246,7 @@
         },
         hideFinalModal: function () {
           this.$modal.hide("final_modal");
+          this.reset();
         }
       },
 
