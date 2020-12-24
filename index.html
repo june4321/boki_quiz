@@ -38,10 +38,7 @@
 <body>
   <div id="app" class="row">
     <div class="offset-sm-3 col-sm-6">
-      <div class="d-flex justify-content-between">
-        <h1>勘定科目クイズ</h1>
-        <button class="btn btn-outline-primary" type="button" v-on:click="reset">1問目からやり直す</button>
-      </div>
+      <h1>勘定科目クイズ</h1>
       <div class="card">
         <div class="card-body">
           <p class="badge badge-dark">第 {{ (questionIndex+1) }} 問／（全{{ this.questions.length }}問）</p><span></span>
@@ -53,6 +50,8 @@
             {{ answer }}</button>
         </div>
       </div>
+      <br>
+      <button class="btn btn-outline-primary" type="button" v-on:click="reset">1問目からやり直す</button>
     </div>
 
     <modal class="" name="answer_modal">
