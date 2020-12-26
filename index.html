@@ -12,24 +12,20 @@
     body {
       padding: 50px;
     }
-
+    
     .modalin {
       margin: 5% auto;
       text-align: center;
     }
-
     .v--modal-box {
       max-width: 100%;
     }
-
     .v--modal-background-click {
       pointer-events: none;
     }
-
     .v--modal-background-click .btn {
       pointer-events: auto;
     }
-
   </style>
 
 </head>
@@ -215,10 +211,8 @@
           if (this.questions.length == this.answeredArray.length) {
             let correctCount = 0;
             for (let i in this.answeredArray) {
-
               if (this.answeredArray[i] == this.questions[i].correctAnswer) {
                 correctCount++;
-
               }
             }
             this.hideAnswerModal();
@@ -229,7 +223,6 @@
             this.hideAnswerModal();
             this.message1 = "";
             this.questionIndex++;
-
           }
         },
         //modal関係
@@ -250,9 +243,7 @@
 
       computed: {
         currentQuestion: function () {
-
           return this.shuffledQest[this.questionIndex];
-
         },
         //this.questionsをシャッフルして、this.shuffledQuestionsに代入して、this.currentQuestionに渡す
         shuffledQest: function () {
